@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: ./backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - redforge_net
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - redforge_net
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - redforge_net
+
+networks:
+  redforge_net:
+
+volumes:
+  mongo_data:

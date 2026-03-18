@@ -1,0 +1,33 @@
+node_modules
+.env
+dist
+.DS_Store
+*.log
+
+# OS
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+.qoder/
+.agent/
+.cursor/
+
+
+# Docker
+docker-compose.override.yml
+
+# Python (for engine later)
+__pycache__/
+*.pyc
+.venv/
+env/
+
+# Build outputs
+build/
+*.tgz
+
+# Environment files (all variants)
+.env.*
+!.env.example
