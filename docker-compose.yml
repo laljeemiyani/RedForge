@@ -6,6 +6,8 @@ services:
       context: ./backend
     ports:
       - "5000:5000"
+    env_file:
+      - ./backend/.env
     depends_on:
       - mongo
       - redis
