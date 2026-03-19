@@ -8,6 +8,8 @@ services:
       - "5000:5000"
     env_file:
       - ./backend/.env
+    volumes:
+      - ./backend/src:/app/src
     depends_on:
       - mongo
       - redis
@@ -37,6 +39,8 @@ services:
       - "8000:8000"
     env_file:
       - ./engine/.env
+    volumes:
+      - ./engine/src:/app/src
     networks:
       - redforge_net
 
