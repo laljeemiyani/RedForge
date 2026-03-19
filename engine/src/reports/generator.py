@@ -218,19 +218,24 @@ class ReportGenerator:
                 # Show Max 10 entries for readability
                 for entry in transcript[:10]:
                     role = str(entry.get('role', '')).upper()
-                    content = str(entry.get('content', ''))
+                    _content_full = str(entry.get('content', ''))
+                    content = _content_full[:500]
+                    if len(_content_full) > 500:
+                        content += "..."
                     
                     content_clean = content.replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br/>')
                     content_para = Paragraph(content_clean, self.normal_style)
                     trans_data.append([role, content_para])
                     
                 if trans_data:
-                    trans_table = Table(trans_data, colWidths=[100, None])
+                    trans_table = Table(trans_data, colWidths=[1.2*inch, 5.3*inch])
                     
                     style_cmds = [
                         ('VALIGN', (0,0), (-1,-1), 'TOP'),
                         ('GRID', (0,0), (-1,-1), 0.25, colors.lightgrey),
                         ('PADDING', (0,0), (-1,-1), 6),
+                        ('WORDWRAP', (0,0), (-1,-1), True),
+                        ('FONTSIZE', (0,0), (-1,-1), 8),
                     ]
                     for i in range(len(trans_data)):
                         bg = '#F5F5F5' if i % 2 == 0 else '#FFFFFF'

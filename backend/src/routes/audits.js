@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 const authMiddleware = require('../middleware/auth');
 const Audit = require('../models/Audit');
 const Finding = require('../models/Finding');
@@ -56,20 +57,66 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /:id/report — download PDF report
+// GET /:id/report — download PDF report (on-demand generation fallback)
 router.get('/:id/report', async (req, res) => {
+  const REPORTS_DIR = '/app/reports';
+
   try {
     const audit = await Audit.findOne({ _id: req.params.id, userId: req.user._id });
     if (!audit) {
       return res.status(404).json({ message: 'Audit not found' });
     }
 
-    if (!audit.reportUrl) {
-      return res.status(404).json({ message: 'Report not ready yet' });
+    if (audit.status !== 'complete') {
+      return res.status(400).json({ message: 'Audit is not complete yet' });
     }
 
     const auditId = audit._id.toString();
-    const filePath = path.join('/app/reports', `${auditId}.pdf`);
+    const filePath = path.join(REPORTS_DIR, `${auditId}.pdf`);
+
+    // Attempt to serve existing PDF
+    let fileExists = false;
+    try {
+      await fs.promises.access(filePath);
+      fileExists = true;
+    } catch { /* file does not exist */ }
+
+    // On-demand generation if PDF is missing
+    if (!fileExists) {
+      console.log(`PDF not found for audit ${auditId}, generating on-demand...`);
+
+      const findings = await Finding.find({ auditId: audit._id });
+
+      const reportBody = {
+        auditId,
+        targetName: audit.targetName,
+        targetUrl: audit.targetUrl,
+        status: audit.status,
+        riskScore: audit.riskScore,
+        findingsCount: audit.findingsCount,
+        completedAt: audit.completedAt,
+        findings: findings.map(f => ({
+          category: f.category,
+          severity: f.severity,
+          title: f.title,
+          description: f.description,
+          transcript: f.transcript,
+          remediation: f.remediation
+        }))
+      };
+
+      const pdfResponse = await axios.post('http://engine:8000/generate-report', reportBody, {
+        responseType: 'arraybuffer',
+        timeout: 30000
+      });
+
+      await fs.promises.mkdir(REPORTS_DIR, { recursive: true });
+      await fs.promises.writeFile(filePath, pdfResponse.data);
+
+      audit.reportUrl = `/reports/${auditId}.pdf`;
+      await audit.save();
+      console.log(`PDF report generated on-demand for audit ${auditId}`);
+    }
 
     const fileBuffer = await fs.promises.readFile(filePath);
 
@@ -77,7 +124,8 @@ router.get('/:id/report', async (req, res) => {
     res.setHeader('Content-Disposition', `attachment; filename=redforge-audit-${auditId}.pdf`);
     res.send(fileBuffer);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('Report download/generation failed:', error.message);
+    res.status(500).json({ message: 'Failed to generate report', error: error.message });
   }
 });
 

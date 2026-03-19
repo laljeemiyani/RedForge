@@ -1,6 +1,24 @@
-version: "3.8"
 
 services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000/api
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+      - WDS_SOCKET_PORT=8080
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - /app/node_modules
+    networks:
+      - redforge_net
+
   backend:
     build:
       context: ./backend
@@ -8,9 +26,12 @@ services:
       - "5000:5000"
     env_file:
       - ./backend/.env
+    environment:
+      - CHOKIDAR_USEPOLLING=true
     volumes:
       - ./backend/src:/app/src
-      - reports_data:/app/reports
+      - ./reports:/app/reports
+      - /app/node_modules
     depends_on:
       - mongo
       - redis
@@ -40,6 +61,8 @@ services:
       - "8000:8000"
     env_file:
       - ./engine/.env
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
     volumes:
       - ./engine/src:/app/src
     networks:
@@ -50,4 +73,3 @@ networks:
 
 volumes:
   mongo_data:
-  reports_data:

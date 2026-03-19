@@ -1,0 +1,14 @@
+{
+  "name": "redforge",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently \"docker-compose up mongo redis engine backend\" \"npm run fe\"",
+    "fe": "cd frontend && npm start",
+    "docker:up": "docker-compose up",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker-compose up --build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
