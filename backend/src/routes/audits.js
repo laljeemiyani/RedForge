@@ -10,22 +10,32 @@ router.use(authMiddleware);
 
 router.post('/', async (req, res) => {
   try {
-    const { targetName, targetUrl, authHeaders } = req.body;
+    const { targetName, targetUrl, authHeaders, categories } = req.body;
 
     if (!targetName || !targetUrl) {
       return res.status(400).json({ message: 'targetName and targetUrl are required' });
+    }
+    
+    if (!categories || !Array.isArray(categories) || categories.length === 0) {
+      return res.status(400).json({ message: 'categories array must contain at least one item' });
     }
 
     const audit = new Audit({
       userId: req.user._id,
       targetName,
       targetUrl,
-      authHeaders: authHeaders || {}
+      authHeaders: authHeaders || {},
+      status: 'queued'
     });
 
     await audit.save();
 
-    await auditQueue.add({ auditId: audit._id });
+    await auditQueue.add({ 
+      auditId: audit._id.toString(), 
+      targetUrl, 
+      authHeaders: authHeaders || {}, 
+      categories 
+    });
 
     res.status(201).json(audit);
   } catch (error) {

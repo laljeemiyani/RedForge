@@ -45,4 +45,10 @@ const auditSchema = new mongoose.Schema({
   }
 });
 
+auditSchema.methods.incrementFinding = function(severity) {
+  if (this.findingsCount[severity] !== undefined) {
+    this.findingsCount[severity] = (this.findingsCount[severity] || 0) + 1;
+  }
+};
+
 module.exports = mongoose.model('Audit', auditSchema);
