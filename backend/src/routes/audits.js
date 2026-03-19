@@ -14,7 +14,7 @@ router.use(authMiddleware);
 // POST / — create audit and queue job
 router.post('/', async (req, res) => {
   try {
-    const { targetName, targetUrl, authHeaders, categories } = req.body;
+    const { targetName, targetUrl, authHeaders, categories, requestTemplate, responsePath, model } = req.body;
 
     if (!targetName || !targetUrl) {
       return res.status(400).json({ message: 'targetName and targetUrl are required' });
@@ -29,6 +29,9 @@ router.post('/', async (req, res) => {
       targetName,
       targetUrl,
       authHeaders: authHeaders || {},
+      requestTemplate: requestTemplate || null,
+      responsePath: responsePath || '',
+      model: model || '',
       status: 'queued'
     });
 
@@ -38,12 +41,28 @@ router.post('/', async (req, res) => {
       auditId: audit._id.toString(),
       targetUrl,
       authHeaders: authHeaders || {},
-      categories
+      categories,
+      requestTemplate: requestTemplate || null,
+      responsePath: responsePath || '',
+      model: model || ''
     });
 
     res.status(201).json(audit);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// POST /test-connection — proxy to engine (protected by auth middleware)
+router.post('/test-connection', async (req, res) => {
+  try {
+    const engineResponse = await axios.post(
+      'http://engine:8000/test-connection',
+      req.body
+    );
+    res.status(engineResponse.status).json(engineResponse.data);
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
   }
 });
 

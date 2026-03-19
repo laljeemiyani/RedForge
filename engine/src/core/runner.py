@@ -7,7 +7,13 @@ from src.attacks.data_leakage import DataLeakageAttack
 
 class AuditRunner:
     async def run_audit(self, request: AuditRequest) -> AuditResponse:
-        target = TargetAI(url=request.targetUrl, auth_headers=request.authHeaders)
+        target = TargetAI(
+            url=request.targetUrl, 
+            auth_headers=request.authHeaders,
+            request_template=request.requestTemplate,
+            response_path=request.responsePath,
+            model=request.model
+        )
         
         attack_map = {
             "prompt_injection": PromptInjectionAttack,

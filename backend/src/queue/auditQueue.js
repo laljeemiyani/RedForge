@@ -11,7 +11,7 @@ const auditQueue = new Queue('audit-jobs', redisUrl);
 const REPORTS_DIR = '/app/reports';
 
 auditQueue.process(async (job) => {
-  const { auditId, targetUrl, authHeaders, categories } = job.data;
+  const { auditId, targetUrl, authHeaders, categories, requestTemplate, responsePath, model } = job.data;
   console.log(`Processing audit job for auditId: ${auditId}`);
 
   try {
@@ -21,7 +21,10 @@ auditQueue.process(async (job) => {
       auditId,
       targetUrl,
       authHeaders: authHeaders || {},
-      categories
+      categories,
+      requestTemplate: requestTemplate || null,
+      responsePath: responsePath || '',
+      model: model || null
     });
 
     const data = response.data;

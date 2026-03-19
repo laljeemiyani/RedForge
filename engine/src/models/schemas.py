@@ -1,11 +1,14 @@
 from pydantic import BaseModel, Field
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 class AuditRequest(BaseModel):
     auditId: str
     targetUrl: str
     authHeaders: Dict[str, str] = Field(default_factory=dict)
     categories: List[str]
+    requestTemplate: Optional[str] = None
+    responsePath: Optional[str] = None
+    model: Optional[str] = None
 
 class AttackResult(BaseModel):
     category: str

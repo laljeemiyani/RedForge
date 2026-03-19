@@ -18,6 +18,18 @@ const auditSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.Mixed,
     default: {}
   },
+  requestTemplate: {
+    type: String,
+    default: null
+  },
+  responsePath: {
+    type: String,
+    default: ''
+  },
+  model: {
+    type: String,
+    default: ''
+  },
   status: {
     type: String,
     enum: ['queued', 'running', 'complete', 'failed'],
