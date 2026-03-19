@@ -10,6 +10,7 @@ services:
       - ./backend/.env
     volumes:
       - ./backend/src:/app/src
+      - reports_data:/app/reports
     depends_on:
       - mongo
       - redis
@@ -49,3 +50,4 @@ networks:
 
 volumes:
   mongo_data:
+  reports_data:
