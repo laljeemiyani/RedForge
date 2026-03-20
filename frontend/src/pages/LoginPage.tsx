@@ -19,7 +19,7 @@ const LoginPage = () => {
     setLoading(true);
     try {
       const { token } = await authApi.login(email, password, persistent);
-      login(token);
+      await login(token);
       navigate('/audits');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Authentication failed. Invalid credentials.');

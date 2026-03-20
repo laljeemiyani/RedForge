@@ -14,9 +14,14 @@ const auditSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  categories: {
+    type: [String],
+    default: []
+  },
   authHeaders: {
     type: mongoose.Schema.Types.Mixed,
-    default: {}
+    default: {},
+    select: false
   },
   requestTemplate: {
     type: String,

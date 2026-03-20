@@ -4,6 +4,11 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const authMiddleware = require('../middleware/auth');
 
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'your_jwt_secret_here') {
+  console.error('FATAL: JWT_SECRET is not set or uses default value. Refusing to start.');
+  process.exit(1);
+}
+
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
@@ -25,7 +30,7 @@ router.post('/register', async (req, res) => {
 
     const token = jwt.sign(
       { _id: user._id, email: user.email }, 
-      process.env.JWT_SECRET || 'your_jwt_secret_here', 
+      process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
     );
 
@@ -55,7 +60,7 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign(
       { _id: user._id, email: user.email }, 
-      process.env.JWT_SECRET || 'your_jwt_secret_here', 
+      process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
     );
 

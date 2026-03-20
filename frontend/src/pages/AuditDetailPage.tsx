@@ -75,7 +75,7 @@ const AuditDetailPage = () => {
   return (
     <div style={{ padding: '32px', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
       <div style={{ marginBottom: '24px' }}>
-        <Link to="/audits" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '12px' }}>
+        <Link to="/app/audits" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '12px' }}>
           ← All Audits
         </Link>
       </div>

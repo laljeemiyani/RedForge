@@ -22,7 +22,7 @@ const RegisterPage = () => {
     setLoading(true);
     try {
       const { token } = await authApi.register(email, password);
-      login(token);
+      await login(token);
       navigate('/audits');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Registration failed.');

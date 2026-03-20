@@ -7,9 +7,9 @@ const Sidebar = () => {
   const { user, logout } = useAuth();
 
   const navItems = [
-    { to: '/audits', label: 'Audits', icon: <List size={16} />, end: true },
-    { to: '/audits/new', label: 'New Audit', icon: <PlusCircle size={16} /> },
-    { to: '/reports', label: 'Reports', icon: <FileText size={16} /> }
+    { to: '/app/audits', label: 'Audits', icon: <List size={16} />, end: true },
+    { to: '/app/audits/new', label: 'New Audit', icon: <PlusCircle size={16} /> },
+    { to: '/app/reports', label: 'Reports', icon: <FileText size={16} /> }
   ];
 
   return (

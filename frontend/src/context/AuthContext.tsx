@@ -10,7 +10,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (token: string) => void;
+  login: (token: string) => Promise<void>;
   logout: () => void;
   loading: boolean;
 }
@@ -27,7 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (token) {
         try {
           const userData = await authApi.getMe();
-          setUser(userData);
+          setUser(userData.user || userData);
         } catch (error) {
           console.error("Auth check failed:", error);
           localStorage.removeItem('rf_token');
@@ -40,9 +40,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initAuth();
   }, [token]);
 
-  const login = (newToken: string) => {
+  const login = async (newToken: string) => {
     localStorage.setItem('rf_token', newToken);
     setToken(newToken);
+    setLoading(true);
+    try {
+      const userData = await authApi.getMe();
+      setUser(userData.user || userData);
+    } catch (error) {
+      localStorage.removeItem('rf_token');
+      setToken(null);
+      setUser(null);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {

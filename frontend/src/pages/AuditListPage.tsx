@@ -50,7 +50,7 @@ const AuditListPage = () => {
           </span>
         </div>
         <button 
-          onClick={() => navigate('/audits/new')}
+          onClick={() => navigate('/app/audits/new')}
           style={{ backgroundColor: 'var(--red)', color: '#fff', border: 'none', padding: '10px 16px', borderRadius: '4px', fontFamily: 'var(--font-mono)', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer' }}
         >
           + NEW AUDIT
@@ -86,7 +86,7 @@ const AuditListPage = () => {
             <Target size={32} color="var(--text-muted)" style={{ margin: '0 auto 16px' }} />
             <div style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)', marginBottom: '16px' }}>NO ADDITIONAL AUDITS ACTIVE</div>
             <button 
-              onClick={() => navigate('/audits/new')}
+              onClick={() => navigate('/app/audits/new')}
               style={{ background: 'transparent', border: 'none', color: 'var(--red)', fontFamily: 'var(--font-mono)', fontSize: '13px', cursor: 'pointer', textDecoration: 'underline' }}
             >
               RUN YOUR FIRST AUDIT →
@@ -107,7 +107,7 @@ const AuditListPage = () => {
               {filteredAudits.map((a, i) => (
                 <tr 
                   key={a._id || a.id} 
-                  onClick={() => navigate(`/audits/${a._id || a.id}`)}
+                  onClick={() => navigate(`/app/audits/${a._id || a.id}`)}
                   style={{ 
                     borderBottom: '1px solid var(--border)', 
                     backgroundColor: i % 2 === 0 ? 'var(--bg-base)' : 'var(--bg-surface)',

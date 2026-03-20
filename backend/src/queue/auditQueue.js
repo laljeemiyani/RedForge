@@ -11,20 +11,25 @@ const auditQueue = new Queue('audit-jobs', redisUrl);
 const REPORTS_DIR = '/app/reports';
 
 auditQueue.process(async (job) => {
-  const { auditId, targetUrl, authHeaders, categories, requestTemplate, responsePath, model } = job.data;
+  const { auditId } = job.data;
   console.log(`Processing audit job for auditId: ${auditId}`);
 
   try {
     await Audit.findByIdAndUpdate(auditId, { status: 'running' });
 
+    const auditWithHeaders = await Audit.findById(auditId).select('+authHeaders');
+    if (!auditWithHeaders) {
+      throw new Error(`Audit with id ${auditId} not found`);
+    }
+
     const response = await axios.post('http://engine:8000/run-audit', {
       auditId,
-      targetUrl,
-      authHeaders: authHeaders || {},
-      categories,
-      requestTemplate: requestTemplate || null,
-      responsePath: responsePath || '',
-      model: model || null
+      targetUrl: auditWithHeaders.targetUrl,
+      authHeaders: auditWithHeaders.authHeaders || {},
+      categories: auditWithHeaders.categories || [],
+      requestTemplate: auditWithHeaders.requestTemplate || null,
+      responsePath: auditWithHeaders.responsePath || '',
+      model: auditWithHeaders.model || null
     });
 
     const data = response.data;

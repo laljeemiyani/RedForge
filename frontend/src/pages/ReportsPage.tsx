@@ -54,7 +54,7 @@ const ReportsPage = () => {
                 {a.targetUrl}
               </div>
               <button 
-                onClick={() => navigate(`/audits/${a._id || a.id}`)}
+                onClick={() => navigate(`/app/audits/${a._id || a.id}`)}
                 style={{ marginTop: 'auto', backgroundColor: 'transparent', border: '1px solid var(--red)', color: 'var(--red)', padding: '8px 16px', borderRadius: '4px', fontFamily: 'var(--font-mono)', fontSize: '12px', cursor: 'pointer', textAlign: 'center' }}
               >
                 VIEW REPORT →

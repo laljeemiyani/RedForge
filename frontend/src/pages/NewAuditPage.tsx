@@ -128,9 +128,9 @@ const NewAuditPage = () => {
       });
       const newId = res.audit?._id || res.audit?.id || res._id || res.id;
       if (newId) {
-        navigate(`/audits/${newId}`);
+        navigate(`/app/audits/${newId}`);
       } else {
-        navigate('/audits');
+        navigate('/app/audits');
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to launch audit');
